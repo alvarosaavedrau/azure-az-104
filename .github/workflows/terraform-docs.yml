@@ -24,13 +24,11 @@ jobs:
           ref: ${{ github.event.pull_request.head.ref }}
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Generate Terraform docs
+      - name: Generate Terraform docs for all lab directories
         uses: terraform-docs/gh-actions@v1.2.0
         with:
-          working-dir: .
+          find-dir: lab*
           output-file: README.md
           output-method: inject
           git-push: "true"
-          recursive: "true"
-          recursive-path: .
           config-file: .terraform-docs.yml
