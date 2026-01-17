@@ -5,26 +5,11 @@ on:
     branches:
       - main
       - master
-  #   paths:
-  #     - '**.tf'
-  #     - '**.tfvars'
-  # pull_request:
-  #   paths:
-  #     - '**.tf'
-  #     - '**.tfvars'
   workflow_dispatch:
 
 jobs:
   docs:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        directory:
-          - lab01
-          - lab02
-          - lab03
-          - lab04
-          - lab05
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -32,11 +17,26 @@ jobs:
           ref: ${{ github.event.pull_request.head.ref }}
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Generate Terraform docs for ${{ matrix.directory }}
+      - name: Generate Terraform docs
         uses: terraform-docs/gh-actions@v1.2.0
         with:
-          working-dir: ${{ matrix.directory }}
+          working-dir: .
           output-file: README.md
           output-method: inject
-          git-push: "true"
+          git-push: "false"
+          recursive: "true"
+          recursive-path: .
           config-file: .terraform-docs.yml
+
+      - name: Remove unwanted README.md files
+        run: |
+          rm -f README.md
+          rm -f .github/README.md
+
+      - name: Commit and push changes
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add .
+          git commit -m "docs: update Terraform documentation" || echo "No changes to commit"
+          git push
