@@ -17,6 +17,14 @@ on:
 jobs:
   docs:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        directory:
+          - lab01
+          - lab02
+          - lab03
+          - lab04
+          - lab05
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -24,10 +32,10 @@ jobs:
           ref: ${{ github.event.pull_request.head.ref }}
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Generate Terraform docs for all lab directories
+      - name: Generate Terraform docs for ${{ matrix.directory }}
         uses: terraform-docs/gh-actions@v1.2.0
         with:
-          find-dir: lab*
+          working-dir: ${{ matrix.directory }}
           output-file: README.md
           output-method: inject
           git-push: "true"
