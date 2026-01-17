@@ -23,20 +23,7 @@ jobs:
           working-dir: .
           output-file: README.md
           output-method: inject
-          git-push: "false"
+          git-push: "true"
           recursive: "true"
           recursive-path: .
           config-file: .terraform-docs.yml
-
-      - name: Remove unwanted README.md files
-        run: |
-          rm -f README.md
-          rm -f .github/README.md
-
-      - name: Commit and push changes
-        run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add .
-          git commit -m "docs: update Terraform documentation" || echo "No changes to commit"
-          git push
